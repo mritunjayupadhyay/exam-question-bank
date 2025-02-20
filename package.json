@@ -9,10 +9,11 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
+    "serverless:info": "serverless info",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "deploy": "serverless deploy",
+    "deploy": "nest build && serverless deploy",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -23,7 +24,9 @@
   "dependencies": {
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/microservices": "^11.0.10",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/websockets": "^11.0.10",
     "@vendia/serverless-express": "^4.12.6",
     "aws-lambda": "^1.0.7",
     "reflect-metadata": "^0.2.2",
@@ -50,16 +53,13 @@
     "prettier": "^3.4.2",
     "serverless": "^4.6.3",
     "serverless-offline": "^14.4.0",
-    "serverless-webpack": "^5.15.0",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.7.3",
-    "typescript-eslint": "^8.20.0",
-    "webpack": "^5.98.0"
+    "typescript": "^5.7.3"
   },
   "jest": {
     "moduleFileExtensions": [
