@@ -1,0 +1,124 @@
+{
+  "/Users/mritunjayupadhyay/everything/code/_mine/exam-question-bank/backend-exam-question-bank/serverless.yml": {
+    "versionFramework": "4.6.3",
+    "servicePath": "/Users/mritunjayupadhyay/everything/code/_mine/exam-question-bank/backend-exam-question-bank/serverless.yml",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "question-bank-serverless",
+      "provider": {
+        "name": "aws",
+        "runtime": "nodejs18.x",
+        "region": "ap-south-1",
+        "memorySize": 256,
+        "timeout": 30,
+        "stage": "dev",
+        "versionFunctions": true
+      },
+      "plugins": [
+        "serverless-offline"
+      ],
+      "package": {
+        "individually": true,
+        "patterns": [
+          "dist/**",
+          "node_modules/**",
+          "!src/**",
+          "!test/**",
+          "!node_modules/@types/**",
+          "!node_modules/.prisma/**",
+          "!node_modules/@prisma/engines/**",
+          "!node_modules/prisma/**",
+          "!.git/**",
+          "!.vscode/**"
+        ],
+        "artifactsS3KeyDirname": "serverless/question-bank-serverless/dev/code-artifacts"
+      },
+      "functions": {
+        "examPapers": {
+          "handler": "dist/modules/exam-papers/lambda.handler",
+          "events": [
+            {
+              "http": {
+                "path": "/exam-papers/{proxy+}",
+                "method": "ANY",
+                "cors": true
+              }
+            }
+          ],
+          "name": "question-bank-serverless-dev-examPapers"
+        },
+        "questions": {
+          "handler": "dist/modules/questions/lambda.handler",
+          "events": [
+            {
+              "http": {
+                "path": "/questions/{proxy+}",
+                "method": "ANY",
+                "cors": true
+              }
+            }
+          ],
+          "name": "question-bank-serverless-dev-questions"
+        }
+      }
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "nodejs18.x",
+      "region": "ap-south-1",
+      "memorySize": 256,
+      "timeout": 30,
+      "stage": "dev",
+      "versionFunctions": true
+    },
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "serviceRawFile": "service: question-bank-serverless\n\nprovider:\n  name: aws\n  runtime: nodejs18.x\n  region: ap-south-1\n  memorySize: 256\n  timeout: 30\n\nplugins:\n  - serverless-offline\n\npackage:\n  individually: true\n  patterns:\n    # Include necessary files\n    - \"dist/**\"  # Include compiled files\n    - \"node_modules/**\"\n    # Exclude unnecessary files\n    - \"!src/**\"\n    - \"!test/**\"\n    - \"!node_modules/@types/**\"\n    - \"!node_modules/.prisma/**\"\n    - \"!node_modules/@prisma/engines/**\"\n    - \"!node_modules/prisma/**\"\n    - \"!.git/**\"\n    - \"!.vscode/**\"\n\nfunctions:\n  examPapers:\n    handler: dist/modules/exam-papers/lambda.handler\n    events:\n      - http:\n          path: /exam-papers/{proxy+}\n          method: ANY\n          cors: true\n  questions:\n    handler: dist/modules/questions/lambda.handler\n    events:\n      - http:\n          path: /questions/{proxy+}\n          method: ANY\n          cors: true",
+    "command": [
+      "info"
+    ],
+    "options": {},
+    "orgId": "829fc847-0ed5-4fff-9035-a4bc4cb030f2",
+    "orgName": "mritunjayupadhyay",
+    "userId": "THZsGbT3YzKn60S6Np",
+    "userName": "mritunjayupadhyay",
+    "serviceProviderAwsAccountId": "992382639357",
+    "serviceProviderAwsCfStackName": "question-bank-serverless-dev",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:ap-south-1:992382639357:stack/question-bank-serverless-dev/5ccd59e0-ef3d-11ef-be34-068cab112fd9",
+    "serviceProviderAwsCfStackCreated": "2025-02-20T03:47:10.731Z",
+    "serviceProviderAwsCfStackUpdated": "2025-02-20T09:34:38.422Z",
+    "serviceProviderAwsCfStackStatus": "UPDATE_COMPLETE",
+    "serviceProviderAwsCfStackOutputs": [
+      {
+        "OutputKey": "ExamPapersLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:ap-south-1:992382639357:function:question-bank-serverless-dev-examPapers:2",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-question-bank-serverless-dev-ExamPapersLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "QuestionsLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:ap-south-1:992382639357:function:question-bank-serverless-dev-questions:2",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-question-bank-serverless-dev-QuestionsLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "ServiceEndpoint",
+        "OutputValue": "https://iap08cc4r3.execute-api.ap-south-1.amazonaws.com/dev",
+        "Description": "URL of the service endpoint",
+        "ExportName": "sls-question-bank-serverless-dev-ServiceEndpoint"
+      },
+      {
+        "OutputKey": "ServerlessDeploymentBucketName",
+        "OutputValue": "serverless-framework-deployments-ap-south-1-0695fbed-8fb9",
+        "ExportName": "sls-question-bank-serverless-dev-ServerlessDeploymentBucketName"
+      }
+    ]
+  }
+}

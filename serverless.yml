@@ -1,0 +1,43 @@
+service: question-bank-serverless
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ap-south-1
+  memorySize: 256
+  timeout: 30
+
+plugins:
+  - serverless-offline
+
+package:
+  individually: true
+  patterns:
+    # Include necessary files
+    - "dist/**"  # Include compiled files
+    - "node_modules/**"
+    # Exclude unnecessary files
+    - "!src/**"
+    - "!test/**"
+    - "!node_modules/@types/**"
+    - "!node_modules/.prisma/**"
+    - "!node_modules/@prisma/engines/**"
+    - "!node_modules/prisma/**"
+    - "!.git/**"
+    - "!.vscode/**"
+
+functions:
+  examPapers:
+    handler: dist/modules/exam-papers/lambda.handler
+    events:
+      - http:
+          path: /exam-papers/{proxy+}
+          method: ANY
+          cors: true
+  questions:
+    handler: dist/modules/questions/lambda.handler
+    events:
+      - http:
+          path: /questions/{proxy+}
+          method: ANY
+          cors: true
