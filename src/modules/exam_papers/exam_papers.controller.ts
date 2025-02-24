@@ -2,7 +2,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { ExamPapersService } from './exam_papers.service';
 
-@Controller('exam_papers')
+@Controller('exam-papers')
 export class ExamPapersController {
   constructor(private readonly examPapersService: ExamPapersService) {}
 
