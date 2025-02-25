@@ -5,6 +5,7 @@
 /.serverless/
 .serverless
 /.serverless
+.serverless/
 
 # Logs
 logs
