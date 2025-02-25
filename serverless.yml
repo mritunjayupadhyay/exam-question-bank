@@ -31,13 +31,13 @@ functions:
     handler: dist/modules/exam-papers/lambda.handler
     events:
       - http:
-          path: /exam-papers/{proxy+}
+          path: /ex-p/{proxy+}
           method: ANY
           cors: true
   questions:
     handler: dist/modules/questions/lambda.handler
     events:
       - http:
-          path: /questions/{proxy+}
+          path: /qs/{proxy+}
           method: ANY
           cors: true
