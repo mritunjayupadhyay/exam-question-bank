@@ -6,7 +6,7 @@ import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import * as express from 'express';
-import { ExamPapersModule } from './exam_papers.module';
+import { ExamPapersModule } from './exam-papers.module';
 import { configure as serverlessExpress } from '@vendia/serverless-express';
 
 let cachedServer: any;

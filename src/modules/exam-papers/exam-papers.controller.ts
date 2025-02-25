@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Controller, Get } from '@nestjs/common';
-import { ExamPapersService } from './exam_papers.service';
+import { ExamPapersService } from './exam-papers.service';
 
 @Controller('exam-papers')
 export class ExamPapersController {
