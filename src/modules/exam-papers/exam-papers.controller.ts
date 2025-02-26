@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Controller, Get } from '@nestjs/common';
 import { ExamPapersService } from './exam-papers.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('exam-papers')
 @Controller('exam-papers')
 export class ExamPapersController {
   constructor(private readonly examPapersService: ExamPapersService) {}

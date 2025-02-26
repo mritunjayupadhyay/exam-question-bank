@@ -10,6 +10,12 @@ provider:
 plugins:
   - serverless-offline
 
+custom:
+  serverless-offline:
+    httpPort: 8000
+    lambdaPort: 8002
+    host: 0.0.0.0
+
 package:
   individually: true
   patterns:

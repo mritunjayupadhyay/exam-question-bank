@@ -8,6 +8,7 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import * as express from 'express';
 import { QuestionsModule } from './questions.module';
 import { configure as serverlessExpress } from '@vendia/serverless-express';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 let cachedServer: any;
 
@@ -18,6 +19,14 @@ const bootstrap = async () => {
       QuestionsModule,
       new ExpressAdapter(expressApp),
     );
+    const config = new DocumentBuilder()
+        .setTitle('Question Bank API')
+        .setDescription('API documentation for the Question Bank')
+        .setVersion('1.0')
+        .build();
+      
+      const document = SwaggerModule.createDocument(app, config);
+      SwaggerModule.setup('api-docs', app, document);
     app.enableCors();
     await app.init();
     cachedServer = serverlessExpress({ app: expressApp });
