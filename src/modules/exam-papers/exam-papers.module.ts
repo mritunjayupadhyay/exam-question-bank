@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common';
 import { QuestionsModule } from '../questions/questions.module';
 import { ExamPapersController } from './exam-papers.controller';
 import { ExamPapersService } from './exam-papers.service';
+import { ConfigModule } from '../../config/config.module';
 
 @Module({
-  imports: [QuestionsModule],
+  imports: [ConfigModule, QuestionsModule],
   controllers: [ExamPapersController],
   providers: [ExamPapersService],
 })

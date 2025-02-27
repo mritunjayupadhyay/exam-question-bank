@@ -23,10 +23,14 @@ const bootstrap = async () => {
             .setTitle('Exam Paper API')
             .setDescription('API documentation for the Question Bank')
             .setVersion('1.0')
+            .addServer('/dev/ex-p')
             .build();
           
           const document = SwaggerModule.createDocument(app, config);
-          SwaggerModule.setup('api-docs', app, document);
+          SwaggerModule.setup('api-docs', app, document, {
+            swaggerOptions: {
+              basePath: '/dev/ex-p'
+            }});
     app.enableCors();
     await app.init();
     cachedServer = serverlessExpress({ app: expressApp });
