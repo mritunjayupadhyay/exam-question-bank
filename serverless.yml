@@ -13,7 +13,7 @@ provider:
           Action:
             - ssm:GetParameter
           Resource:
-            - arn:aws:ssm:ap-southeast-1:992382639357:parameter/my-first-parameter-store
+            - arn:aws:ssm:ap-south-1:992382639357:parameter/my-first-parameter-store
 
 plugins:
   - serverless-offline
