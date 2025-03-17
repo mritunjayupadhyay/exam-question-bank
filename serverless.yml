@@ -46,14 +46,14 @@ functions:
     environment:
       NODE_ENV: ${opt:stage, 'local'}
       MY_PARAMETER: ${ssm:/my-first-parameter-store, 'local-fallback-value'}
-    handler: dist/modules/exam-papers/lambda.handler
+    handler: dist/src/modules/exam-papers/lambda.handler
     events:
       - http:
           path: /ex-p/{proxy+}
           method: ANY
           cors: true
   questions:
-    handler: dist/modules/questions/lambda.handler
+    handler: dist/src/modules/questions/lambda.handler
     events:
       - http:
           path: /qs/{proxy+}
