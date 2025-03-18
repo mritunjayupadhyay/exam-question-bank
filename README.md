@@ -24,7 +24,8 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Serverless Project with[Nest](https://github.com/nestjs/nest) framework (to be running in AWS lambda). I am using api gateway, aws lambda, cloudwatch, AWS parameter store from AWS eco system. In developement we are using docker image of postgre. For production I am using Neon DB(because of its complete serverless behaviour). 
+I have chosen drizzle as ORM because it was light-weight among popular ORMs.
 
 ## Project setup
 
@@ -36,7 +37,10 @@ $ npm install
 
 ```bash
 # development
-$ npm run start
+$ docker compose --env-file .env.local up
+$ npm run start:offline or nest build && serverless offline start
+$ npx drizzle-kit studio // To check database schema using drizzle
+
 
 # watch mode
 $ npm run start:dev

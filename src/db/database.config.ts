@@ -23,27 +23,19 @@ function createDrizzleClient() {
 
   // Build connection string based on environment variables
   let connectionString: string;
-  
+
   if (isProd) {
     // Use the Neon URL directly
     connectionString = process.env.NEON_DATABASE_URL || '';
   } else if (isDev || isLocal) {
     // For development - either use DATABASE_URL directly or build it from components
     const dbUser = process.env.DB_USER || 'postgres';
-      const dbPassword = process.env.DB_PASSWORD || 'postgres';
-      const dbHost = process.env.DB_HOST || 'localhost';
-      const dbPort = process.env.DB_PORT || '5432';
-      const dbName = process.env.DB_NAME || 'nestjs_db';
-      
-      connectionString = `postgresql://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/${dbName}`;
-      console.log({
-        dbUser,
-        dbPassword,
-        dbHost,
-        dbPort,
-        dbName,
-        connectionString,
-      })
+    const dbPassword = process.env.DB_PASSWORD || 'postgres';
+    const dbHost = process.env.DB_HOST || 'localhost';
+    const dbPort = process.env.DB_PORT || '5432';
+    const dbName = process.env.DB_NAME || 'nestjs_db';
+
+    connectionString = `postgresql://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/${dbName}`;
   } else {
     // Fallback to Neon
     connectionString = process.env.NEON_DATABASE_URL || '';
@@ -54,43 +46,33 @@ function createDrizzleClient() {
   }
 
   console.log(`Connecting to database in ${process.env.NODE_ENV} environment`);
-  
+
 
   // For Neon serverless, we need different connection options
   const connectionOptions = isProd || (!isLocal && !isDev)
     ? {
-        ssl: true,
-        connection: {
-          options: `project=${process.env.NEON_PROJECT_ID}`,
-        },
-        // Important settings for serverless
-        max: 1, // Use a single connection in Lambda
-        idle_timeout: 20, // Shorter idle timeout
-        connect_timeout: 10, // Shorter connect timeout
-      }
+      ssl: true,
+      connection: {
+        options: `project=${process.env.NEON_PROJECT_ID}`,
+      },
+      // Important settings for serverless
+      max: 1, // Use a single connection in Lambda
+      idle_timeout: 20, // Shorter idle timeout
+      connect_timeout: 10, // Shorter connect timeout
+    }
     : {
-        // Dev/local settings
-        max: 10, // Can use more connections locally
-        idle_timeout: 30,
-      };
-  console.log('Connection options:', { connectionOptions });
-  // Create the SQL client
-  const sql = postgres(connectionString, connectionOptions);
+      // Dev/local settings
+      max: 10, // Can use more connections locally
+      idle_timeout: 30,
+    };
+
   const dbUser = process.env.DB_USER || 'postgres';
-      const dbPassword = process.env.DB_PASSWORD || 'postgres';
-      const dbHost = process.env.DB_HOST || 'localhost';
-      const dbPort = process.env.DB_PORT || '5432';
-      const dbName = process.env.DB_NAME || 'nestjs_db';
-      
-      connectionString = `postgresql://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/${dbName}`;
-      console.log({
-        dbUser,
-        dbPassword,
-        dbHost,
-        dbPort,
-        dbName,
-        connectionString,
-      })
+  const dbPassword = process.env.DB_PASSWORD || 'postgres';
+  const dbHost = process.env.DB_HOST || 'localhost';
+  const dbPort = process.env.DB_PORT || '5432';
+  const dbName = process.env.DB_NAME || 'nestjs_db';
+
+  connectionString = `postgresql://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/${dbName}`;
   // Configure connection based on environment
   const connectionConfig = {
     host: dbHost,
@@ -110,7 +92,7 @@ function createDrizzleClient() {
   });
 
   // Create the Drizzle client
-//   return drizzle(sql, { schema });
+  //   return drizzle(sql, { schema });
 
   // Return drizzle instance
   return drizzle(poolConnection, { schema });
@@ -126,16 +108,16 @@ export function getDb() {
 
 // Export the pool connection for migrations and cleanup
 export const connection = {
-    get pool() {
-      if (!poolConnection) {
-        // Ensure the pool is created if accessed directly
-        createDrizzleClient();
-      }
-      return poolConnection;
-    },
-    end: async () => {
-      if (poolConnection) {
-        await poolConnection.end();
-      }
+  get pool() {
+    if (!poolConnection) {
+      // Ensure the pool is created if accessed directly
+      createDrizzleClient();
     }
-  };
+    return poolConnection;
+  },
+  end: async () => {
+    if (poolConnection) {
+      await poolConnection.end();
+    }
+  }
+};
