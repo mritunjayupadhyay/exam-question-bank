@@ -44,7 +44,7 @@ package:
 functions:
   examPapers:
     environment:
-      NODE_ENV: ${opt:stage, 'local'}
+      NODE_ENV: ${opt:stage, 'production'}
       MY_PARAMETER: ${ssm:/my-first-parameter-store, 'local-fallback-value'}
     handler: dist/src/modules/exam-papers/lambda.handler
     events:
@@ -60,5 +60,5 @@ functions:
           method: ANY
           cors: true
     environment:
-      NODE_ENV: ${opt:stage, 'local'}
+      NODE_ENV: ${opt:stage, 'production'}
       MY_PARAMETER: ${ssm:/my-first-parameter-store, 'local-fallback-value'}
