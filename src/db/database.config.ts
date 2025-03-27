@@ -26,7 +26,12 @@ function createDrizzleClient() {
     
     poolConfig = { 
       connectionString,
-      ssl: { rejectUnauthorized: false }
+      ssl: { rejectUnauthorized: false },
+      // Add connection pool settings optimized for serverless
+      max: 1, // Limit to 1 connection per Lambda instance
+      idleTimeoutMillis: 120000, // Keep connections alive between invocations
+      connectionTimeoutMillis: 10000, // Timeout for new connections
+
     };
   } else {
     poolConfig = {

@@ -13,7 +13,7 @@ provider:
           Action:
             - ssm:GetParameter
           Resource:
-            - arn:aws:ssm:ap-south-1:992382639357:parameter/my-first-parameter-store
+            - arn:aws:ssm:${self:provider.region}:${aws:accountId}:parameter/my-first-parameter-store
 
 plugins:
   - serverless-offline
@@ -44,7 +44,7 @@ package:
 functions:
   examPapers:
     environment:
-      NODE_ENV: ${opt:stage, 'production'}
+      NODE_ENV: ${opt:stage, 'local'}
       MY_PARAMETER: ${ssm:/my-first-parameter-store, 'local-fallback-value'}
     handler: dist/src/modules/exam-papers/lambda.handler
     events:
@@ -60,5 +60,5 @@ functions:
           method: ANY
           cors: true
     environment:
-      NODE_ENV: ${opt:stage, 'production'}
+      NODE_ENV: ${opt:stage, 'local'}
       MY_PARAMETER: ${ssm:/my-first-parameter-store, 'local-fallback-value'}

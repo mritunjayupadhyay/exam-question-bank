@@ -19,17 +19,18 @@ const bootstrap = async () => {
       ExamPapersModule,
       new ExpressAdapter(expressApp),
     );
+    const basePath = `/${process.env.NODE_ENV || 'dev'}/ex-p`;
     const config = new DocumentBuilder()
             .setTitle('Exam Paper API')
             .setDescription('API documentation for the Question Bank')
             .setVersion('1.0')
-            .addServer('/dev/ex-p')
+            .addServer(basePath)
             .build();
           
           const document = SwaggerModule.createDocument(app, config);
           SwaggerModule.setup('api-docs', app, document, {
             swaggerOptions: {
-              basePath: '/dev/ex-p'
+              basePath: basePath
             }});
     app.enableCors();
     await app.init();

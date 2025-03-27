@@ -19,17 +19,18 @@ const bootstrap = async () => {
       QuestionsModule,
       new ExpressAdapter(expressApp),
     );
+    const basePath = `/${process.env.NODE_ENV || 'dev'}/qs`;
     const config = new DocumentBuilder()
         .setTitle('Question Bank API')
         .setDescription('API documentation for the Question Bank')
         .setVersion('1.0')
-        .addServer('/dev/qs')
+        .addServer(basePath)
         .build();
       
       const document = SwaggerModule.createDocument(app, config);
       SwaggerModule.setup('api-docs', app, document, {
         swaggerOptions: {
-          basePath: '/dev/qs'
+          basePath: basePath
         }});
     app.enableCors();
     await app.init();
