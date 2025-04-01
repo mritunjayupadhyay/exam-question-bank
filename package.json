@@ -12,7 +12,7 @@
     "copy:dev": "cp .env.dev .env",
     "start:local-postgres": "docker compose --env-file .env.local up",
     "serverless:info": "serverless info",
-    "start:local": "npm run start:local-postgres && npm run start:offline --stage local",
+    "start:local": "nest build && serverless offline start --stage local",
     "start:production": "nest build && serverless offline start --stage production",
     "start:staging": "nest build && serverless offline start --stage staging",
     "start:offline": "nest build && serverless offline start",

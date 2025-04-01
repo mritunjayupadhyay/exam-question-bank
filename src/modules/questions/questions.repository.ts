@@ -15,7 +15,7 @@ export class QuestionRepository {
     // Note: Update the table name to match your actual schema
     return this.db
       .select()
-      .from(schema.question)
+      .from(schema.questions)
       .limit(limit)
       .offset(offset);
   }
@@ -23,15 +23,15 @@ export class QuestionRepository {
   async findById(id: string) {
     const results = await this.db
       .select()
-      .from(schema.question)
-      .where(eq(schema.question.id, Number(id)))
+      .from(schema.questions)
+      .where(eq(schema.questions.id, id))
       .limit(1);
     
     return results.length ? results[0] : null;
   }
   async create(data: any) {
     const [question] = await this.db
-      .insert(schema.question)
+      .insert(schema.questions)
       .values(data)
       .returning();
     

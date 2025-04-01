@@ -31,7 +31,7 @@ function createDrizzleClient() {
       max: 1, // Limit to 1 connection per Lambda instance
       idleTimeoutMillis: 120000, // Keep connections alive between invocations
       connectionTimeoutMillis: 10000, // Timeout for new connections
-
+      casing: 'snake_case', // Use snake_case for column names
     };
   } else {
     poolConfig = {
@@ -40,6 +40,7 @@ function createDrizzleClient() {
       database: process.env.DB_NAME,
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
+      casing: 'snake_case'
     };
   } 
 
