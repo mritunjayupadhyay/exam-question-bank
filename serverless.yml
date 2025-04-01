@@ -62,3 +62,13 @@ functions:
     environment:
       NODE_ENV: ${opt:stage, 'local'}
       MY_PARAMETER: ${ssm:/my-first-parameter-store, 'local-fallback-value'}
+  basicSetup:
+    handler: dist/src/modules/basic-setup/lambda.handler
+    events:
+      - http:
+          path: /basic-setup/{proxy+}
+          method: ANY
+          cors: true
+    environment:
+      NODE_ENV: ${opt:stage, 'local'}
+      MY_PARAMETER: ${ssm:/my-first-parameter-store, 'local-fallback-value'}
