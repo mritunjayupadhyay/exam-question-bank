@@ -4,11 +4,14 @@ import { DatabaseModule } from 'src/db/database.module';
 import { SubjectsService } from './subjects.service';
 import { SubjectRepository } from './subjects.repository';
 import { SubjectsController } from './subjects.controller';
+import { TopicsController } from './topics.controller';
+import { TopicService } from './topics.service';
+import { TopicRepository } from './topics.repository';
 
 @Module({
   imports: [ConfigModule, DatabaseModule],
-  controllers: [SubjectsController],
-  providers: [SubjectsService, SubjectRepository],
-  exports: [SubjectsService],
+  controllers: [SubjectsController, TopicsController],
+  providers: [SubjectsService, SubjectRepository, TopicService, TopicRepository],
+  exports: [SubjectsService, TopicService],
 })
 export class SubjectsModule {}
