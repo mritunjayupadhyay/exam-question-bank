@@ -14,7 +14,7 @@ export class QuestionFilterDto {
       description: 'Filter by topic ID',
       required: false
     })
-    topicId?: string;
+    topicIds?: string[];
   
     @ApiProperty({
       type: String,

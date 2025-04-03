@@ -27,11 +27,16 @@ import {
   UpdateExamPaperQuestionDto 
 } from './dto/exam-paper.dto';
 import { ExamPaperService } from './exam-papers.service';
+import { ExamPaperGeneratorService } from './exam-paper.generator.service';
+import { GenerateExamPaperDto, GenerateQuestionForExamSectionDto } from './dto/exam-paper-generator.dto';
 
 @ApiTags('exam-papers')
 @Controller('exam-papers')
 export class ExamPaperController {
-  constructor(private readonly examPaperService: ExamPaperService) {}
+  constructor(
+    private readonly examPaperService: ExamPaperService,
+    private readonly examPaperGeneratorService: ExamPaperGeneratorService
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all exam papers with pagination' })
@@ -153,5 +158,25 @@ export class ExamPaperController {
     @Param('questionId', ParseUUIDPipe) questionId: string,
   ) {
     return this.examPaperService.removeQuestionFromExamPaper(examPaperId, questionId);
+  }
+
+  @Post('generate')
+  @ApiOperation({ summary: 'Generate an exam paper automatically using configuration' })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'The exam paper has been successfully generated.' 
+  })
+  async generateExamPaper(@Body() generateDto: GenerateExamPaperDto) {
+    return this.examPaperGeneratorService.generateExamPaper(generateDto);
+  } 
+
+  @Post('questions-for-exam-paper-section')
+  @ApiOperation({ summary: 'Generate an exam paper automatically using configuration' })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'The exam paper section has been successfully generated.' 
+  })
+  async getQuestionForExamPaperSection(@Body() generateDto: GenerateQuestionForExamSectionDto) {
+    return this.examPaperGeneratorService.generateQuestionsForSection(generateDto);
   }
 }

@@ -10,16 +10,18 @@ import { ExamTypeRepository } from './exam-type.repository';
 import { ClassesModule } from '../classes/classes.module';
 import { DatabaseModule } from 'src/db/database.module';
 import { ExamTypeController } from './exam-type.controller';
+import { ExamPaperGeneratorService } from './exam-paper.generator.service';
 
 @Module({
   imports: [ConfigModule, DatabaseModule, QuestionsModule, SubjectsModule, ClassesModule],
   controllers: [ExamPaperController, ExamTypeController],
   providers: [
-    ExamPaperService, 
-    ExamPaperRepository, 
-    ExamTypeService, 
-    ExamTypeRepository
+    ExamPaperService,
+    ExamPaperRepository,
+    ExamTypeService,
+    ExamTypeRepository,
+    ExamPaperGeneratorService
   ],
-  exports: [ExamPaperService, ExamPaperRepository, ExamTypeService, ExamTypeRepository],
+  exports: [ExamPaperService, ExamPaperRepository, ExamTypeService, ExamTypeRepository, ExamPaperGeneratorService],
 })
-export class ExamPapersModule {}
+export class ExamPapersModule { }

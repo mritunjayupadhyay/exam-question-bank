@@ -24,7 +24,8 @@ import {
   @ApiTags('exam-types')
   @Controller('exam-types')
   export class ExamTypeController {
-    constructor(private readonly examTypeService: ExamTypeService) {}
+    constructor(
+      private readonly examTypeService: ExamTypeService) {}
   
     @Get()
     @ApiOperation({ summary: 'Get all exam types with pagination' })

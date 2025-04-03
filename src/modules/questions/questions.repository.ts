@@ -70,8 +70,8 @@ export class QuestionRepository {
       conditions.push(eq(schema.questions.subjectId, filters.subjectId));
     }
     
-    if (filters.topicId) {
-      conditions.push(eq(schema.questions.topicId, filters.topicId));
+    if (filters.topicIds && filters.topicIds.length > 0) {
+      conditions.push(inArray(schema.questions.topicId, filters.topicIds));
     }
     
     if (filters.classId) {
@@ -107,6 +107,49 @@ export class QuestionRepository {
     }
     
     return query.limit(limit).offset(offset);
+  }
+  async filterQuestionsWithRelations(filters: QuestionFilterDto, limit = 100, offset = 0) {
+    // Get filtered questions first
+    const questions = await this.filterQuestions(filters, limit, offset);
+    
+    if (!questions.length) {
+      return [];
+    }
+    
+    // Extract IDs for batch queries
+    const questionIds = questions.map(q => q.id);
+    
+    // Batch load options and images in two efficient queries
+    const [options, images] = await Promise.all([
+      this.db
+        .select()
+        .from(schema.questionOptions)
+        .where(inArray(schema.questionOptions.questionId, questionIds)),
+      this.db
+        .select()
+        .from(schema.questionImages)
+        .where(inArray(schema.questionImages.questionId, questionIds))
+    ]);
+    
+    // Create lookup maps for O(1) access
+    const optionsMap = options.reduce((map, option) => {
+      if (!map[option.questionId]) map[option.questionId] = [];
+      map[option.questionId].push(option);
+      return map;
+    }, {});
+    
+    const imagesMap = images.reduce((map, image) => {
+      if (!map[image.questionId]) map[image.questionId] = [];
+      map[image.questionId].push(image);
+      return map;
+    }, {});
+    
+    // Combine everything efficiently
+    return questions.map(question => ({
+      ...question,
+      options: optionsMap[question.id] || [],
+      images: imagesMap[question.id] || []
+    }));
   }
 
   async createQuestion(data: CreateQuestionDto) {
