@@ -1,7 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { eq, and, like, desc } from 'drizzle-orm';
+import { eq, and, like, desc, gte, lte, inArray, SQL, sql } from 'drizzle-orm';
 import * as schema from '../../db/schema';
+import { QuestionFilterDto } from './dto/filter-question.dto';
+import { CreateQuestionDto, UpdateQuestionDto } from './dto/create-question.dto';
+import { uuid } from 'drizzle-orm/gel-core';
+import { isValidUUID } from 'src/utils/validUUID.utils';
 
 @Injectable()
 export class QuestionRepository {
@@ -9,10 +13,7 @@ export class QuestionRepository {
     @Inject('DATABASE') private db: PostgresJsDatabase<typeof schema>,
   ) {}
 
-  // Assuming you have a questions table defined in your schema
-  async findAll(limit = 100, offset = 0) {
-    // Using the schema you defined earlier
-    // Note: Update the table name to match your actual schema
+  async findAllQuestions(limit = 100, offset = 0) {
     return this.db
       .select()
       .from(schema.questions)
@@ -29,12 +30,282 @@ export class QuestionRepository {
     
     return results.length ? results[0] : null;
   }
-  async create(data: any) {
-    const [question] = await this.db
-      .insert(schema.questions)
-      .values(data)
-      .returning();
+
+  async findByIdWithRelations(id: string) {
+    const results = await this.db.transaction(async (tx) => {
+      const question = await tx
+        .select()
+        .from(schema.questions)
+        .where(eq(schema.questions.id, id))
+        .limit(1);
+      
+      if (!question.length) {
+        return null;
+      }
+      
+      const options = await tx
+        .select()
+        .from(schema.questionOptions)
+        .where(eq(schema.questionOptions.questionId, id));
+      
+      const images = await tx
+        .select()
+        .from(schema.questionImages)
+        .where(eq(schema.questionImages.questionId, id));
+      
+      return {
+        ...question[0],
+        options,
+        images
+      };
+    });
+    
+    return results;
+  }
+
+  async filterQuestions(filters: QuestionFilterDto, limit = 100, offset = 0) {
+    const conditions: SQL<unknown>[] = [];
+    
+    if (filters.subjectId) {
+      conditions.push(eq(schema.questions.subjectId, filters.subjectId));
+    }
+    
+    if (filters.topicId) {
+      conditions.push(eq(schema.questions.topicId, filters.topicId));
+    }
+    
+    if (filters.classId) {
+      conditions.push(eq(schema.questions.classId, filters.classId));
+    }
+    
+    if (filters.difficultyLevel) {
+      conditions.push(eq(schema.questions.difficultyLevel, filters.difficultyLevel));
+    }
+    
+    if (filters.questionType) {
+      conditions.push(eq(schema.questions.questionType, filters.questionType));
+    }
+    
+    if (filters.minMarks !== undefined) {
+      conditions.push(gte(schema.questions.marks, filters.minMarks));
+    }
+    
+    if (filters.maxMarks !== undefined) {
+      conditions.push(lte(schema.questions.marks, filters.maxMarks));
+    }
+    
+    const whereCondition = conditions.length > 0 
+      ? and(...conditions) 
+      : undefined;
+    
+    const query = this.db
+      .select()
+      .from(schema.questions);
+    
+    if (whereCondition) {
+      query.where(whereCondition);
+    }
+    
+    return query.limit(limit).offset(offset);
+  }
+
+  async createQuestion(data: CreateQuestionDto) {
+    const { subjectId, topicId, classId } = data;
+    if (!isValidUUID(subjectId) || !isValidUUID(topicId) || !isValidUUID(classId)) {
+      throw new Error('Invalid UUID format');
+    }
+    const question = await this.db.transaction(async (tx) => {
+      // Create question first
+      const [createdQuestion] = await tx
+        .insert(schema.questions)
+        .values({
+          questionText: data.questionText,
+          marks: data.marks,
+          difficultyLevel: data.difficultyLevel,
+          questionType: data.questionType,
+          ...(schema.questions.subjectId && { subjectId }),
+          ...(schema.questions.topicId && { topicId }),
+          ...(schema.questions.classId && { classId })
+        })
+        .returning();
+      
+      // If it's multiple choice, add options
+      if (data.options && data.options.length > 0) {
+        await tx
+          .insert(schema.questionOptions)
+          .values(
+            data.options.map(option => ({
+              questionId: createdQuestion.id,
+              optionText: option.optionText,
+              isCorrect: option.isCorrect
+            }))
+          );
+      }
+      
+      // Add any images
+      if (data.images && data.images.length > 0) {
+        await tx
+          .insert(schema.questionImages)
+          .values(
+            data.images.map(image => ({
+              questionId: createdQuestion.id,
+              imageUrl: image.imageUrl
+            }))
+          );
+      }
+      
+      return createdQuestion;
+    });
     
     return question;
+  }
+
+  async updateQuestion(id: string, data: UpdateQuestionDto) {
+    // Create an update object with only the properties that are provided
+    const updateData: any = {
+      updatedAt: new Date()
+    };
+
+    // Only add properties if they are defined
+    if (data.questionText !== undefined) {
+      updateData.questionText = data.questionText;
+    }
+
+    if (data.marks !== undefined) {
+      updateData.marks = data.marks;
+    }
+
+    if (data.difficultyLevel !== undefined) {
+      updateData.difficultyLevel = data.difficultyLevel;
+    }
+
+    if (data.questionType !== undefined) {
+      updateData.questionType = data.questionType;
+    }
+
+    if (data.subjectId !== undefined) {
+      updateData.subjectId = data.subjectId;
+    }
+
+    if (data.topicId !== undefined) {
+      updateData.topicId = data.topicId;
+    }
+
+    if (data.classId !== undefined) {
+      updateData.classId = data.classId;
+    }
+
+    const [updatedQuestion] = await this.db
+      .update(schema.questions)
+      .set(updateData)
+      .where(eq(schema.questions.id, id))
+      .returning();
+    
+    return updatedQuestion;
+  }
+
+  async deleteQuestion(id: string) {
+    await this.db.transaction(async (tx) => {
+      // Delete related options and images first
+      await tx
+        .delete(schema.questionOptions)
+        .where(eq(schema.questionOptions.questionId, id));
+      
+      await tx
+        .delete(schema.questionImages)
+        .where(eq(schema.questionImages.questionId, id));
+      
+      // Delete question
+      await tx
+        .delete(schema.questions)
+        .where(eq(schema.questions.id, id));
+    });
+    
+    return { success: true };
+  }
+
+  // Methods for managing options
+  async addOption(questionId: string, optionText: string, isCorrect: boolean) {
+    const [option] = await this.db
+      .insert(schema.questionOptions)
+      .values({
+        questionId,
+        optionText,
+        isCorrect
+      })
+      .returning();
+    
+    return option;
+  }
+
+  async updateOption(optionId: string, optionText?: string, isCorrect?: boolean) {
+    const updateData: any = {
+      updatedAt: new Date()
+    };
+
+    if (optionText !== undefined) {
+      updateData.optionText = optionText;
+    }
+
+    if (isCorrect !== undefined) {
+      updateData.isCorrect = isCorrect;
+    }
+
+    const [updatedOption] = await this.db
+      .update(schema.questionOptions)
+      .set(updateData)
+      .where(eq(schema.questionOptions.id, optionId))
+      .returning();
+    
+    return updatedOption;
+  }
+
+  async deleteOption(optionId: string) {
+    await this.db
+      .delete(schema.questionOptions)
+      .where(eq(schema.questionOptions.id, optionId));
+    
+    return { success: true };
+  }
+
+  // Methods for managing images
+  async addImage(questionId: string, imageUrl: string) {
+    const imageData: any = {
+      imageUrl
+    }
+    if (questionId) {
+      imageData.questionId = questionId;
+    }
+    const [image] = await this.db
+      .insert(schema.questionImages)
+      .values(imageData)
+      .returning();
+    
+    return image;
+  }
+
+  async updateImage(imageId: string, imageUrl: string) {
+    const updateData: any = {
+      updatedAt: new Date()
+    };
+    // Only add properties if they are defined
+    if (imageUrl !== undefined) {
+      updateData.imageUrl = imageUrl;
+    }
+    const [updatedImage] = await this.db
+      .update(schema.questionImages)
+      .set(updateData)
+      .where(eq(schema.questionImages.id, imageId))
+      .returning();
+    
+    return updatedImage;
+  }
+
+  async deleteImage(imageId: string) {
+    await this.db
+      .delete(schema.questionImages)
+      .where(eq(schema.questionImages.id, imageId));
+    
+    return { success: true };
   }
 }

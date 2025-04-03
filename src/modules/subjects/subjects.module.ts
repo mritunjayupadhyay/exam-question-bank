@@ -12,6 +12,6 @@ import { TopicRepository } from './topics.repository';
   imports: [ConfigModule, DatabaseModule],
   controllers: [SubjectsController, TopicsController],
   providers: [SubjectsService, SubjectRepository, TopicService, TopicRepository],
-  exports: [SubjectsService, TopicService],
+  exports: [SubjectsService, SubjectRepository,  TopicService, TopicRepository],
 })
 export class SubjectsModule {}

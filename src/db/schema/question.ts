@@ -31,7 +31,7 @@ export const questionImages = pgTable('question_images', {
 
 export const questionOptions = pgTable('question_options', {
   id: uuid('id').primaryKey().defaultRandom(),
-  questionId: uuid('question_id').references(() => questions.id),
+  questionId: uuid('question_id').notNull().references(() => questions.id),
   optionText: text('option_text').notNull(),
   isCorrect: boolean('is_correct').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
