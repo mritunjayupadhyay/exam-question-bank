@@ -10,7 +10,9 @@ import {
   ParseUUIDPipe, 
   DefaultValuePipe, 
   ParseIntPipe,
-  Patch
+  Patch,
+  UseInterceptors,
+  ClassSerializerInterceptor
 } from '@nestjs/common';
 import { 
   ApiTags, 
@@ -23,13 +25,18 @@ import {
 import { QuestionService } from './questions.service';
 import { 
   DifficultyLevel,
+  QuestionBasicDto,
+  QuestionDto,
   QuestionType
 } from './dto/question.dto';
 import { QuestionFilterDto } from './dto/filter-question.dto';
 import { CreateQuestionDto, UpdateQuestionDto } from './dto/create-question.dto';
+import { ResponseInterceptor } from 'src/interceptors/response.interceptor';
 
 @ApiTags('questions')
 @Controller('questions')
+@UseInterceptors(ClassSerializerInterceptor)  // This enables the @Exclude decorators
+@UseInterceptors(ResponseInterceptor)
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
@@ -41,7 +48,8 @@ export class QuestionController {
     @Query('limit', new DefaultValuePipe(100), ParseIntPipe) limit?: number,
     @Query('offset', new DefaultValuePipe(0), ParseIntPipe) offset?: number,
   ) {
-    return this.questionService.findAll(limit, offset);
+    const questions = await this.questionService.findAll(limit, offset);
+    return questions.map(q => new QuestionBasicDto(q));
   }
 
   @Get('filter')
@@ -60,14 +68,16 @@ export class QuestionController {
     @Query('limit', new DefaultValuePipe(100), ParseIntPipe) limit?: number,
     @Query('offset', new DefaultValuePipe(0), ParseIntPipe) offset?: number,
   ) {
-    return this.questionService.filterQuestions(filterDto, limit, offset);
+    const questions = await this.questionService.filterQuestions(filterDto, limit, offset);
+    return questions.map(q => new QuestionBasicDto(q));
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get question by ID' })
   @ApiParam({ name: 'id', required: true, type: String })
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.questionService.findById(id);
+    const question = await this.questionService.findById(id);
+    return new QuestionDto(question);
   }
 
   @Get(':id/full')

@@ -1,4 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Exclude, Transform, Expose, Type } from 'class-transformer';
+import { IQuestion, IQuestionDB, IQuestionFullDetails, IQuestionImage, IQuestionOption } from "question-bank-interface";
+
 
 export enum DifficultyLevel {
   LOW = 'low',
@@ -36,5 +39,89 @@ export class QuestionImageDto {
   imageUrl: string;
 }
 
+export class QuestionBasicDto implements IQuestionDB {
+  id: string;
+  questionText: string;
+  marks: number;
+  difficultyLevel: string;
+  questionType: string;
 
+  @Exclude()
+  subjectId: string;
+
+  @Exclude()
+  topicId: string;
+
+  @Exclude()
+  classId: string;
+  
+  @Exclude()
+  createdAt: Date;
+  
+  @Exclude()
+  updatedAt: Date;
+  
+  constructor(partial: Partial<QuestionDto>) {
+    Object.assign(this, partial);
+  }
+}
+
+export class QuestionDto implements IQuestionDB {
+  id: string;
+  questionText: string;
+  marks: number;
+  difficultyLevel: string;
+  questionType: string;
+  subjectId: string;
+  topicId: string;
+  classId: string;
+  
+  @Exclude()
+  createdAt: Date;
+  
+  @Exclude()
+  updatedAt: Date;
+  
+  constructor(partial: Partial<QuestionDto>) {
+    Object.assign(this, partial);
+  }
+}
+
+export class QuestionOptionResDto implements IQuestionOption {
+  id: string;
+  optionText: string;
+  isCorrect: boolean;
+}
+
+export class QuestionImageResDto implements IQuestionImage {
+  id: string;
+  imageUrl: string;
+}
+
+export class QuestionFullDetailsDto implements IQuestionFullDetails {
+  id: string;
+  questionText: string;
+  marks: number;
+  difficultyLevel: string;
+  questionType: string;
+  subject: string;
+  topic: string;
+  className: string;
+  
+  @Type(() => QuestionOptionResDto)
+  questionOptions: QuestionOptionResDto[];
+  
+  @Type(() => QuestionImageResDto)
+  questionImages: QuestionImageResDto[];
+  
+  @Exclude()
+  createdAt: Date;
+  
+  @Exclude()
+  updatedAt: Date;
+  
+  constructor(partial: Partial<QuestionFullDetailsDto>) {
+    Object.assign(this, partial);
+  }
+}
 

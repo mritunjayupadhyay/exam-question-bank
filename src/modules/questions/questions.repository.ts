@@ -33,15 +33,30 @@ export class QuestionRepository {
 
   async findByIdWithRelations(id: string) {
     const results = await this.db.transaction(async (tx) => {
-      const question = await tx
-        .select()
+      const questionRes = await tx
+      .select({
+        question: schema.questions,
+        subjectName: schema.subjects.name,
+        topicName: schema.topics.name,
+        className: schema.classes.name
+      })
         .from(schema.questions)
+        .leftJoin(schema.subjects, eq(schema.questions.subjectId, schema.subjects.id))
+        .leftJoin(schema.topics, eq(schema.questions.topicId, schema.topics.id))
+        .leftJoin(schema.classes, eq(schema.questions.classId, schema.classes.id))
         .where(eq(schema.questions.id, id))
-        .limit(1);
+        .execute();
       
-      if (!question.length) {
+      if (!questionRes.length) {
         return null;
       }
+      const question = {
+        ...questionRes[0].question,
+        subjectName: questionRes[0].subjectName,
+        topicName: questionRes[0].topicName,
+        className: questionRes[0].className,
+      }
+
       
       const options = await tx
         .select()
@@ -54,7 +69,7 @@ export class QuestionRepository {
         .where(eq(schema.questionImages.questionId, id));
       
       return {
-        ...question[0],
+        ...question,
         options,
         images
       };

@@ -41,7 +41,7 @@ export class QuestionSectionConfig {
   @ApiProperty({
     type: Number,
     description: 'Total marks for this section',
-    example: 5
+    example: 4
   })
   totalMarks: number;
 
@@ -55,7 +55,7 @@ export class QuestionSectionConfig {
   @ApiProperty({
     type: Number,
     description: 'Total questions to include in this section (more than required to answer, for choice)',
-    example: 7
+    example: 5
   })
   totalQuestions: number;
 
@@ -77,7 +77,7 @@ export class QuestionSectionConfig {
   @ApiProperty({
     type: [String],
     description: 'Array of topic IDs to pull questions from',
-    example: ['topic-id-1', 'topic-id-2'],
+    example: ['64961cfb-47f7-4f54-b3a6-560d6c74a5f8'],
     required: false
   })
   topicIds?: string[];
@@ -130,14 +130,14 @@ export class GenerateQuestionForExamSectionDto {
     @ApiProperty({
       type: String,
       description: 'Subject ID of the exam',
-      example: '123e4567-e89b-12d3-a456-426614174000'
+      example: 'f46b6a8d-90f3-430d-8f30-fbd5171ec0fd'
     })
     subjectId: string;
   
     @ApiProperty({
       type: String,
       description: 'Class ID for which this exam is intended',
-      example: '123e4567-e89b-12d3-a456-426614174000'
+      example: 'd527da5d-379d-4de2-b5ff-ecccb9628a3b'
     })
     classId: string;
 

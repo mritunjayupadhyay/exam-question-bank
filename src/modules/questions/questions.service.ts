@@ -4,7 +4,7 @@ import { SubjectRepository } from '../subjects/subjects.repository';
 import { TopicRepository } from '../subjects/topics.repository';
 import { QuestionFilterDto } from './dto/filter-question.dto';
 import { CreateQuestionDto, UpdateQuestionDto } from './dto/create-question.dto';
-import { QuestionType } from './dto/question.dto';
+import { QuestionFullDetailsDto, QuestionType } from './dto/question.dto';
 import { ClassesRepository } from '../classes/classes.repository';
 
 @Injectable()
@@ -33,7 +33,25 @@ export class QuestionService {
     if (!question) {
       throw new NotFoundException(`Question with ID ${id} not found`);
     }
-    return question;
+    return new QuestionFullDetailsDto({
+      id: question.id,
+      questionText: question.questionText,
+      marks: question.marks,
+      difficultyLevel: question.difficultyLevel,
+      questionType: question.questionType,
+      subject: question.subjectName, // Assuming subject has a name property
+      topic: question.topicName, // Assuming topic has a name property
+      className: question.className, // Assuming class has a name property
+      questionOptions: question.options.map(option => ({
+        id: option.id,
+        optionText: option.optionText,
+        isCorrect: option.isCorrect
+      })),
+      questionImages: question.images.map(image => ({
+        id: image.id,
+        imageUrl: image.imageUrl
+      }))
+    });
   }
 
   async filterQuestions(filters: QuestionFilterDto, limit?: number, offset?: number) {

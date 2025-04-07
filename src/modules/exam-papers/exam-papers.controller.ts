@@ -9,7 +9,8 @@ import {
   Query, 
   ParseUUIDPipe, 
   DefaultValuePipe, 
-  ParseIntPipe
+  ParseIntPipe,
+  UseInterceptors
 } from '@nestjs/common';
 import { 
   ApiTags, 
@@ -29,9 +30,11 @@ import {
 import { ExamPaperService } from './exam-papers.service';
 import { ExamPaperGeneratorService } from './exam-paper.generator.service';
 import { GenerateExamPaperDto, GenerateQuestionForExamSectionDto } from './dto/exam-paper-generator.dto';
+import { ResponseInterceptor } from 'src/interceptors/response.interceptor';
 
 @ApiTags('exam-papers')
 @Controller('exam-papers')
+@UseInterceptors(ResponseInterceptor)
 export class ExamPaperController {
   constructor(
     private readonly examPaperService: ExamPaperService,

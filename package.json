@@ -42,9 +42,11 @@
     "@nestjs/websockets": "^11.0.10",
     "@vendia/serverless-express": "^4.12.6",
     "aws-lambda": "^1.0.7",
+    "class-transformer": "^0.5.1",
     "drizzle-orm": "^0.40.0",
     "pg": "^8.13.3",
     "postgres": "^3.4.5",
+    "question-bank-interface": "^1.0.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "swagger-ui-express": "^5.0.1"
