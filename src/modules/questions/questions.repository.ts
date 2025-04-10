@@ -114,6 +114,60 @@ export class QuestionRepository {
       : undefined;
     
     const query = this.db
+    .select({
+      question: schema.questions,
+      subjectName: schema.subjects.name,
+      topicName: schema.topics.name,
+      className: schema.classes.name
+    })
+      .from(schema.questions)
+      .leftJoin(schema.subjects, eq(schema.questions.subjectId, schema.subjects.id))
+      .leftJoin(schema.topics, eq(schema.questions.topicId, schema.topics.id))
+      .leftJoin(schema.classes, eq(schema.questions.classId, schema.classes.id))
+    
+    if (whereCondition) {
+      query.where(whereCondition);
+    }
+    
+    return query.limit(limit).offset(offset);
+  }
+
+  async filterQuestionsBasicInfo(filters: QuestionFilterDto, limit = 100, offset = 0) {
+    const conditions: SQL<unknown>[] = [];
+    
+    if (filters.subjectId) {
+      conditions.push(eq(schema.questions.subjectId, filters.subjectId));
+    }
+    
+    if (filters.topicIds && filters.topicIds.length > 0) {
+      conditions.push(inArray(schema.questions.topicId, filters.topicIds));
+    }
+    
+    if (filters.classId) {
+      conditions.push(eq(schema.questions.classId, filters.classId));
+    }
+    
+    if (filters.difficultyLevel) {
+      conditions.push(eq(schema.questions.difficultyLevel, filters.difficultyLevel));
+    }
+    
+    if (filters.questionType) {
+      conditions.push(eq(schema.questions.questionType, filters.questionType));
+    }
+    
+    if (filters.minMarks !== undefined) {
+      conditions.push(gte(schema.questions.marks, filters.minMarks));
+    }
+    
+    if (filters.maxMarks !== undefined) {
+      conditions.push(lte(schema.questions.marks, filters.maxMarks));
+    }
+    
+    const whereCondition = conditions.length > 0 
+      ? and(...conditions) 
+      : undefined;
+    
+    const query = this.db
       .select()
       .from(schema.questions);
     
@@ -123,9 +177,9 @@ export class QuestionRepository {
     
     return query.limit(limit).offset(offset);
   }
-  async filterQuestionsWithRelations(filters: QuestionFilterDto, limit = 100, offset = 0) {
+  async filterQuestionsFullDetails(filters: QuestionFilterDto, limit = 100, offset = 0) {
     // Get filtered questions first
-    const questions = await this.filterQuestions(filters, limit, offset);
+    const questions = await this.filterQuestionsBasicInfo(filters, limit, offset);
     
     if (!questions.length) {
       return [];

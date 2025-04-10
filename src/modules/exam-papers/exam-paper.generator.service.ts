@@ -110,7 +110,7 @@ export class ExamPaperGeneratorService {
     if (!sectionConfig.difficultyDistribution) {
       // Request just what we need plus a small buffer
       const limit = Math.min(500, sectionConfig.totalQuestions * 2); 
-      const questions = await this.questionRepository.filterQuestionsWithRelations(
+      const questions = await this.questionRepository.filterQuestionsFullDetails(
         baseFilter, 
         limit, 
         0
@@ -146,7 +146,7 @@ export class ExamPaperGeneratorService {
       
       // Only fetch what we need plus a small buffer
       const limit = Math.min(200, requiredCounts[difficulty] * 2);
-      return this.questionRepository.filterQuestionsWithRelations(difficultyFilter, limit, 0);
+      return this.questionRepository.filterQuestionsFullDetails(difficultyFilter, limit, 0);
     }));
     
     const [lowQuestions, mediumQuestions, hardQuestions] = difficultyQueries;

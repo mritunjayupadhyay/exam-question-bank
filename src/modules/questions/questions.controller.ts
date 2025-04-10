@@ -40,18 +40,6 @@ import { ResponseInterceptor } from 'src/interceptors/response.interceptor';
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
-  @Get()
-  @ApiOperation({ summary: 'Get all questions with pagination' })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'offset', required: false, type: Number })
-  async findAll(
-    @Query('limit', new DefaultValuePipe(100), ParseIntPipe) limit?: number,
-    @Query('offset', new DefaultValuePipe(0), ParseIntPipe) offset?: number,
-  ) {
-    const questions = await this.questionService.findAll(limit, offset);
-    return questions.map(q => new QuestionBasicDto(q));
-  }
-
   @Get('filter')
   @ApiOperation({ summary: 'Filter questions by various criteria' })
   @ApiQuery({ name: 'subjectId', required: false, type: String })
@@ -69,7 +57,7 @@ export class QuestionController {
     @Query('offset', new DefaultValuePipe(0), ParseIntPipe) offset?: number,
   ) {
     const questions = await this.questionService.filterQuestions(filterDto, limit, offset);
-    return questions.map(q => new QuestionBasicDto(q));
+    return questions.map(q => new QuestionDto(q));
   }
 
   @Get(':id')

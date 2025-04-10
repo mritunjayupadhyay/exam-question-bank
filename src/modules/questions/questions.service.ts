@@ -4,7 +4,7 @@ import { SubjectRepository } from '../subjects/subjects.repository';
 import { TopicRepository } from '../subjects/topics.repository';
 import { QuestionFilterDto } from './dto/filter-question.dto';
 import { CreateQuestionDto, UpdateQuestionDto } from './dto/create-question.dto';
-import { QuestionFullDetailsDto, QuestionType } from './dto/question.dto';
+import { QuestionDto, QuestionFullDetailsDto, QuestionType } from './dto/question.dto';
 import { ClassesRepository } from '../classes/classes.repository';
 
 @Injectable()
@@ -55,7 +55,17 @@ export class QuestionService {
   }
 
   async filterQuestions(filters: QuestionFilterDto, limit?: number, offset?: number) {
-    return this.questionRepository.filterQuestions(filters, limit, offset);
+    const questions = await this.questionRepository.filterQuestions(filters, limit, offset);
+    return questions.map(q => new QuestionDto({
+      id: q.question.id,
+      questionText: q.question.questionText,
+      marks: q.question.marks,
+      difficultyLevel: q.question.difficultyLevel,
+      questionType: q.question.questionType,
+      subject: q.subjectName, // Assuming subject has a name property
+      topic: q.topicName, // Assuming topic has a name property
+      className: q.className, // Assuming class has a name property
+    }));
   }
 
   async create(createQuestionDto: CreateQuestionDto) {

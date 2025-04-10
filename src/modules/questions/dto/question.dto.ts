@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Exclude, Transform, Expose, Type } from 'class-transformer';
-import { IQuestion, IQuestionDB, IQuestionFullDetails, IQuestionImage, IQuestionOption } from "question-bank-interface";
+import { IQuestion, IQuestionDB, IQuestionFullDetails, IQuestionImage, IQuestionListItem, IQuestionOption } from "question-bank-interface";
 
 
 export enum DifficultyLevel {
@@ -61,20 +61,20 @@ export class QuestionBasicDto implements IQuestionDB {
   @Exclude()
   updatedAt: Date;
   
-  constructor(partial: Partial<QuestionDto>) {
+  constructor(partial: Partial<QuestionBasicDto>) {
     Object.assign(this, partial);
   }
 }
 
-export class QuestionDto implements IQuestionDB {
+export class QuestionDto implements IQuestion {
   id: string;
   questionText: string;
   marks: number;
   difficultyLevel: string;
   questionType: string;
-  subjectId: string;
-  topicId: string;
-  classId: string;
+  subject: string;
+  topic: string;
+  className: string;
   
   @Exclude()
   createdAt: Date;
