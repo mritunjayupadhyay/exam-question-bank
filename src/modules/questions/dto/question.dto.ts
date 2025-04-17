@@ -2,18 +2,6 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Exclude, Transform, Expose, Type } from 'class-transformer';
 import { IQuestion, IQuestionDB, IQuestionFullDetails, IQuestionImage, IQuestionListItem, IQuestionOption } from "question-bank-interface";
 
-
-export enum DifficultyLevel {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HARD = 'hard'
-}
-
-export enum QuestionType {
-  MULTIPLE_CHOICE = 'multiple_choice',
-  DESCRIPTIVE = 'descriptive'
-}
-
 export class QuestionOptionDto {
   @ApiProperty({
     type: String,

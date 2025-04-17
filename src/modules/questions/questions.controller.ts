@@ -24,14 +24,13 @@ import {
 } from '@nestjs/swagger';
 import { QuestionService } from './questions.service';
 import { 
-  DifficultyLevel,
   QuestionBasicDto,
   QuestionDto,
-  QuestionType
 } from './dto/question.dto';
 import { QuestionFilterDto } from './dto/filter-question.dto';
 import { CreateQuestionDto, UpdateQuestionDto } from './dto/create-question.dto';
 import { ResponseInterceptor } from 'src/interceptors/response.interceptor';
+import { DifficultyLevel, QuestionType } from 'question-bank-interface';
 
 @ApiTags('questions')
 @Controller('questions')
@@ -43,7 +42,7 @@ export class QuestionController {
   @Get('filter')
   @ApiOperation({ summary: 'Filter questions by various criteria' })
   @ApiQuery({ name: 'subjectId', required: false, type: String })
-  @ApiQuery({ name: 'topicId', required: false, type: String })
+  @ApiQuery({ name: 'topicIds', required: false, type: [String], isArray: true })
   @ApiQuery({ name: 'classId', required: false, type: String })
   @ApiQuery({ name: 'difficultyLevel', required: false, enum: DifficultyLevel })
   @ApiQuery({ name: 'questionType', required: false, enum: QuestionType })

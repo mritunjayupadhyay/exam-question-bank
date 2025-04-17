@@ -46,7 +46,7 @@
     "drizzle-orm": "^0.40.0",
     "pg": "^8.13.3",
     "postgres": "^3.4.5",
-    "question-bank-interface": "^1.0.6",
+    "question-bank-interface": "^1.0.7",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "swagger-ui-express": "^5.0.1"

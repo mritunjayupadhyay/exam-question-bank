@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { QuestionType } from "src/modules/questions/dto/question.dto";
+import { QuestionType } from "question-bank-interface";
 
 export class DifficultyPercentage {
   @ApiProperty({

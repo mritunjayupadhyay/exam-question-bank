@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { DifficultyLevel, QuestionImageDto, QuestionOptionDto, QuestionType } from "./question.dto";
+import { QuestionImageDto, QuestionOptionDto } from "./question.dto";
+import { DifficultyLevel, QuestionType } from "question-bank-interface";
 
 export class CreateQuestionDto {
     @ApiProperty({

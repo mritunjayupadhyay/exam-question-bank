@@ -85,8 +85,14 @@ export class QuestionRepository {
       conditions.push(eq(schema.questions.subjectId, filters.subjectId));
     }
     
-    if (filters.topicIds && filters.topicIds.length > 0) {
-      conditions.push(inArray(schema.questions.topicId, filters.topicIds));
+    if (filters.topicIds) {
+      console.log('Topic IDs:', filters.topicIds, conditions);
+      if (Array.isArray(filters.topicIds)) {
+        conditions.push(inArray(schema.questions.topicId, filters.topicIds));
+      } else { // if it's a single ID
+        conditions.push(eq(schema.questions.topicId, filters.topicIds));
+      }
+      console.log('Topic IDs:', filters.topicIds, conditions);
     }
     
     if (filters.classId) {

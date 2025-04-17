@@ -4,8 +4,9 @@ import { SubjectRepository } from '../subjects/subjects.repository';
 import { TopicRepository } from '../subjects/topics.repository';
 import { QuestionFilterDto } from './dto/filter-question.dto';
 import { CreateQuestionDto, UpdateQuestionDto } from './dto/create-question.dto';
-import { QuestionDto, QuestionFullDetailsDto, QuestionType } from './dto/question.dto';
+import { QuestionDto, QuestionFullDetailsDto } from './dto/question.dto';
 import { ClassesRepository } from '../classes/classes.repository';
+import { QuestionType } from 'question-bank-interface';
 
 @Injectable()
 export class QuestionService {
