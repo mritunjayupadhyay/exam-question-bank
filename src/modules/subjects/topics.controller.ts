@@ -1,10 +1,12 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, Query, ParseUUIDPipe, DefaultValuePipe, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, Query, ParseUUIDPipe, DefaultValuePipe, ParseIntPipe, UseInterceptors } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { TopicService } from './topics.service';
 import { CreateTopicDto, UpdateTopicDto } from './dto/topic.dto';
+import { ResponseInterceptor } from 'src/interceptors/response.interceptor';
 
 @ApiTags('topics')
 @Controller('topics')
+@UseInterceptors(ResponseInterceptor)
 export class TopicsController {
   constructor(private readonly topicService: TopicService) {}
 

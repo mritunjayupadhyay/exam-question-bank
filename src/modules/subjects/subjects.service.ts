@@ -2,7 +2,7 @@ import { subjects } from './../../db/schema/subject';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SubjectRepository } from './subjects.repository';
-import { CreateSubjectDto } from './dto/subject.dto';
+import { CreateSubjectDto, SubjectDto } from './dto/subject.dto';
 
 @Injectable()
 export class SubjectsService {
@@ -17,10 +17,10 @@ export class SubjectsService {
   }
   async findAllSubject() {
     const subjects = await this.subjectRepository.findAllSubject();
-    return {
-      mode: this.mode,
-      data: subjects
-    };
+    return subjects.map(s => new SubjectDto({
+      id: s.id,
+      name: s.name
+    }));
   }
 
   async createSubject(data: CreateSubjectDto) {

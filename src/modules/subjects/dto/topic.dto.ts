@@ -1,4 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Exclude } from "class-transformer";
+import { IName } from "question-bank-interface";
 
 export class CreateTopicDto {
     @ApiProperty({
@@ -32,4 +34,17 @@ export class UpdateTopicDto {
         required: false
     })
     subjectId?: string;
+}
+
+export class TopicDto implements IName {
+    id: string;
+    name: string;
+    @Exclude()
+    createdAt: Date;
+
+    @Exclude()
+    updatedAt: Date;
+    constructor(partial: Partial<TopicDto>) {
+        Object.assign(this, partial);
+      }
 }

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { TopicRepository } from './topics.repository';
-import { CreateTopicDto, UpdateTopicDto } from './dto/topic.dto';
+import { CreateTopicDto, TopicDto, UpdateTopicDto } from './dto/topic.dto';
 import { SubjectRepository } from './subjects.repository';
 
 @Injectable()
@@ -29,7 +29,11 @@ export class TopicService {
       throw new NotFoundException(`Subject with ID ${subjectId} not found`);
     }
     
-    return this.topicRepository.findBySubjectId(subjectId, limit, offset);
+    const topics = await this.topicRepository.findBySubjectId(subjectId, limit, offset);
+    return topics.map(s => new TopicDto({
+              id: s.id,
+              name: s.name
+            }));
   }
 
   async create(createTopicDto: CreateTopicDto) {
