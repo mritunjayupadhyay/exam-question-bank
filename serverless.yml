@@ -59,6 +59,11 @@ functions:
           path: /qs/{proxy+}
           method: ANY
           cors: true
+          authorizer:
+            arn: ${cf:shared-clerk-authorizer-production.ClerkAuthorizerArn}
+            type: token
+            identitySource: method.request.header.Authorization
+            resultTtlInSeconds: 0
     environment:
       NODE_ENV: ${opt:stage, 'local'}
       MY_PARAMETER: ${ssm:/my-first-parameter-store, 'local-fallback-value'}
