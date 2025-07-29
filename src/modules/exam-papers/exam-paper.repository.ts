@@ -116,9 +116,21 @@ export class ExamPaperRepository {
       : undefined;
     
     const query = this.db
-      .select()
-      .from(schema.examPapers);
-    
+      .select({
+      id: schema.examPapers.id,
+      title: schema.examPapers.title,
+      totalMarks: schema.examPapers.totalMarks,
+      durationMinutes: schema.examPapers.durationMinutes,
+      subjectId: schema.examPapers.subjectId, // Assuming subject has an ID property
+      classNameId: schema.examPapers.classId, // Assuming class has an ID property
+      examTypeId: schema.examPapers.examTypeId,
+      createdAt: schema.examPapers.createdAt, // Assuming exam paper has a createdAt property
+      updatedAt: schema.examPapers.updatedAt, // Assuming exam paper has an updatedAt property
+      examTypeName: schema.examTypes.name, // Add examTypeName
+    })
+      .from(schema.examPapers)
+      .leftJoin(schema.examTypes, eq(schema.examPapers.examTypeId, schema.examTypes.id));
+
     if (whereCondition) {
       query.where(whereCondition);
     }
