@@ -3,8 +3,8 @@ export { difficultyLevelEnum, questionTypeEnum,
     questionsRelations, questionImagesRelations, questionOptionsRelations  } from './question';
 
 export {
-    examTypes, examPapers, examPaperQuestions,
-    examPapersRelations, examTypesRelations, examPaperQuestionsRelations
+    examTypes, examPapers, examPaperSections, examPaperQuestions,
+    examPapersRelations, examTypesRelations, examPaperSectionsRelations, examPaperQuestionsRelations,
 } from './examPaper';
 export {
     subjects, topics,

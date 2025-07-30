@@ -1,5 +1,5 @@
 {
-  "id": "e7a91264-4901-44f0-8841-c206e1654f88",
+  "id": "5f964a25-e42c-4f09-8290-308669aa314b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -48,17 +48,24 @@
       "name": "exam_paper_questions",
       "schema": "",
       "columns": {
-        "exam_paper_id": {
-          "name": "exam_paper_id",
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "section_id": {
+          "name": "section_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "question_id": {
           "name": "question_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "question_number": {
           "name": "question_number",
@@ -66,21 +73,29 @@
           "primaryKey": false,
           "notNull": true
         },
-        "section": {
-          "name": "section",
-          "type": "varchar(50)",
+        "is_optional": {
+          "name": "is_optional",
+          "type": "boolean",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "exam_paper_questions_exam_paper_id_exam_papers_id_fk": {
-          "name": "exam_paper_questions_exam_paper_id_exam_papers_id_fk",
+        "exam_paper_questions_section_id_exam_paper_sections_id_fk": {
+          "name": "exam_paper_questions_section_id_exam_paper_sections_id_fk",
           "tableFrom": "exam_paper_questions",
-          "tableTo": "exam_papers",
+          "tableTo": "exam_paper_sections",
           "columnsFrom": [
-            "exam_paper_id"
+            "section_id"
           ],
           "columnsTo": [
             "id"
@@ -102,15 +117,113 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {
-        "exam_paper_questions_exam_paper_id_question_id_pk": {
-          "name": "exam_paper_questions_exam_paper_id_question_id_pk",
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "exam_paper_questions_section_id_question_id_unique": {
+          "name": "exam_paper_questions_section_id_question_id_unique",
+          "nullsNotDistinct": false,
           "columns": [
-            "exam_paper_id",
+            "section_id",
             "question_id"
+          ]
+        },
+        "exam_paper_questions_section_id_question_number_unique": {
+          "name": "exam_paper_questions_section_id_question_number_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "section_id",
+            "question_number"
           ]
         }
       },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.exam_paper_sections": {
+      "name": "exam_paper_sections",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "exam_paper_id": {
+          "name": "exam_paper_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "section_number": {
+          "name": "section_number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(200)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "instructions": {
+          "name": "instructions",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "marks_per_question": {
+          "name": "marks_per_question",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "questions_to_answer": {
+          "name": "questions_to_answer",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_questions": {
+          "name": "total_questions",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "section_marks": {
+          "name": "section_marks",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "exam_paper_sections_exam_paper_id_exam_papers_id_fk": {
+          "name": "exam_paper_sections_exam_paper_id_exam_papers_id_fk",
+          "tableFrom": "exam_paper_sections",
+          "tableTo": "exam_papers",
+          "columnsFrom": [
+            "exam_paper_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
@@ -341,7 +454,7 @@
           "name": "question_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "option_text": {
           "name": "option_text",

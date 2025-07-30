@@ -23,16 +23,8 @@ export class ExamPaperService {
     private questionRepository: QuestionRepository,
   ) {}
 
-  async findAll(limit?: number, offset?: number) {
-    return this.examPaperRepository.findAllExamPapers(limit, offset);
-  }
-
-  async findById(id: string) {
-    const examPaper = await this.examPaperRepository.findById(id);
-    if (!examPaper) {
-      throw new NotFoundException(`Exam paper with ID ${id} not found`);
-    }
-    return examPaper;
+    async searchByTitle(title: string, limit?: number, offset?: number) {
+    return this.examPaperRepository.searchExamPapersByTitle(title, limit, offset);
   }
 
   async findByIdWithQuestions(id: string) {
@@ -54,18 +46,6 @@ export class ExamPaperService {
       createExamPaperDto.subjectId,
       createExamPaperDto.classId
     );
-    
-    // Validate questions if provided
-    if (createExamPaperDto.questions && createExamPaperDto.questions.length > 0) {
-      await this.validateQuestions(createExamPaperDto.questions.map(q => q.questionId));
-      
-      // Check for duplicate question numbers
-      const questionNumbers = createExamPaperDto.questions.map(q => q.questionNumber);
-      if (new Set(questionNumbers).size !== questionNumbers.length) {
-        throw new BadRequestException('Duplicate question numbers are not allowed');
-      }
-    }
-    
     return this.examPaperRepository.createExamPaper(createExamPaperDto);
   }
 
@@ -94,86 +74,6 @@ export class ExamPaperService {
     }
     
     return this.examPaperRepository.deleteExamPaper(id);
-  }
-
-  // Methods for managing exam paper questions
-  async getExamPaperQuestions(examPaperId: string) {
-    // Check if exam paper exists
-    const examPaper = await this.examPaperRepository.findById(examPaperId);
-    if (!examPaper) {
-      throw new NotFoundException(`Exam paper with ID ${examPaperId} not found`);
-    }
-    
-    return this.examPaperRepository.getExamPaperQuestions(examPaperId);
-  }
-
-  async addQuestionToExamPaper(examPaperId: string, data: AddQuestionToExamPaperDto) {
-    // Check if exam paper exists
-    const examPaper = await this.examPaperRepository.findById(examPaperId);
-    if (!examPaper) {
-      throw new NotFoundException(`Exam paper with ID ${examPaperId} not found`);
-    }
-    
-    // Check if question exists
-    const question = await this.questionRepository.findById(data.questionId);
-    if (!question) {
-      throw new NotFoundException(`Question with ID ${data.questionId} not found`);
-    }
-    
-    // Check if the question is already in the exam paper
-    const examPaperQuestions = await this.examPaperRepository.getExamPaperQuestions(examPaperId);
-    const questionExists = examPaperQuestions.some(q => q.questionId === data.questionId);
-    if (questionExists) {
-      throw new BadRequestException(`Question with ID ${data.questionId} is already in the exam paper`);
-    }
-    
-    // Check if the question number is already taken
-    const questionNumberTaken = examPaperQuestions.some(q => q.questionNumber === data.questionNumber);
-    if (questionNumberTaken) {
-      throw new BadRequestException(`Question number ${data.questionNumber} is already taken`);
-    }
-    
-    return this.examPaperRepository.addQuestionToExamPaper(examPaperId, data);
-  }
-
-  async updateExamPaperQuestion(
-    examPaperId: string, 
-    questionId: string, 
-    data: UpdateExamPaperQuestionDto
-  ) {
-    // Check if the exam paper and question association exists
-    const examPaperQuestions = await this.examPaperRepository.getExamPaperQuestions(examPaperId);
-    const questionExists = examPaperQuestions.some(q => q.questionId === questionId);
-    if (!questionExists) {
-      throw new NotFoundException(`Question with ID ${questionId} not found in exam paper with ID ${examPaperId}`);
-    }
-    
-    // If updating question number, check if the new number is already taken
-    if (data.questionNumber !== undefined) {
-      const questionNumberTaken = examPaperQuestions.some(
-        q => q.questionNumber === data.questionNumber && q.questionId !== questionId
-      );
-      if (questionNumberTaken) {
-        throw new BadRequestException(`Question number ${data.questionNumber} is already taken`);
-      }
-    }
-    
-    return this.examPaperRepository.updateExamPaperQuestion(examPaperId, questionId, data);
-  }
-
-  async removeQuestionFromExamPaper(examPaperId: string, questionId: string) {
-    // Check if the exam paper and question association exists
-    const examPaperQuestions = await this.examPaperRepository.getExamPaperQuestions(examPaperId);
-    const questionExists = examPaperQuestions.some(q => q.questionId === questionId);
-    if (!questionExists) {
-      throw new NotFoundException(`Question with ID ${questionId} not found in exam paper with ID ${examPaperId}`);
-    }
-    
-    return this.examPaperRepository.removeQuestionFromExamPaper(examPaperId, questionId);
-  }
-
-  async searchByTitle(title: string, limit?: number, offset?: number) {
-    return this.examPaperRepository.searchExamPapersByTitle(title, limit, offset);
   }
 
   // Helper method to validate references to other entities for create

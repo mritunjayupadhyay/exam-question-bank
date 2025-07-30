@@ -8,11 +8,27 @@ CREATE TABLE "classes" (
 );
 --> statement-breakpoint
 CREATE TABLE "exam_paper_questions" (
-	"exam_paper_id" uuid,
-	"question_id" uuid,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"section_id" uuid NOT NULL,
+	"question_id" uuid NOT NULL,
 	"question_number" integer NOT NULL,
-	"section" varchar(50),
-	CONSTRAINT "exam_paper_questions_exam_paper_id_question_id_pk" PRIMARY KEY("exam_paper_id","question_id")
+	"is_optional" boolean DEFAULT false,
+	"created_at" timestamp with time zone DEFAULT now(),
+	CONSTRAINT "exam_paper_questions_section_id_question_id_unique" UNIQUE("section_id","question_id"),
+	CONSTRAINT "exam_paper_questions_section_id_question_number_unique" UNIQUE("section_id","question_number")
+);
+--> statement-breakpoint
+CREATE TABLE "exam_paper_sections" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"exam_paper_id" uuid NOT NULL,
+	"section_number" integer NOT NULL,
+	"title" varchar(200) NOT NULL,
+	"instructions" text,
+	"marks_per_question" integer NOT NULL,
+	"questions_to_answer" integer NOT NULL,
+	"total_questions" integer NOT NULL,
+	"section_marks" integer NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now()
 );
 --> statement-breakpoint
 CREATE TABLE "exam_papers" (
@@ -44,7 +60,7 @@ CREATE TABLE "question_images" (
 --> statement-breakpoint
 CREATE TABLE "question_options" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"question_id" uuid,
+	"question_id" uuid NOT NULL,
 	"option_text" text NOT NULL,
 	"is_correct" boolean NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now(),
@@ -79,8 +95,9 @@ CREATE TABLE "topics" (
 	"updated_at" timestamp with time zone DEFAULT now()
 );
 --> statement-breakpoint
-ALTER TABLE "exam_paper_questions" ADD CONSTRAINT "exam_paper_questions_exam_paper_id_exam_papers_id_fk" FOREIGN KEY ("exam_paper_id") REFERENCES "public"."exam_papers"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "exam_paper_questions" ADD CONSTRAINT "exam_paper_questions_section_id_exam_paper_sections_id_fk" FOREIGN KEY ("section_id") REFERENCES "public"."exam_paper_sections"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "exam_paper_questions" ADD CONSTRAINT "exam_paper_questions_question_id_questions_id_fk" FOREIGN KEY ("question_id") REFERENCES "public"."questions"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "exam_paper_sections" ADD CONSTRAINT "exam_paper_sections_exam_paper_id_exam_papers_id_fk" FOREIGN KEY ("exam_paper_id") REFERENCES "public"."exam_papers"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "exam_papers" ADD CONSTRAINT "exam_papers_exam_type_id_exam_types_id_fk" FOREIGN KEY ("exam_type_id") REFERENCES "public"."exam_types"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "exam_papers" ADD CONSTRAINT "exam_papers_subject_id_subjects_id_fk" FOREIGN KEY ("subject_id") REFERENCES "public"."subjects"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "exam_papers" ADD CONSTRAINT "exam_papers_class_id_classes_id_fk" FOREIGN KEY ("class_id") REFERENCES "public"."classes"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
