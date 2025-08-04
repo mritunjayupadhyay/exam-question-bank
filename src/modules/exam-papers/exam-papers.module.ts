@@ -10,6 +10,8 @@ import { ExamTypeRepository } from './exam-type.repository';
 import { ClassesModule } from '../classes/classes.module';
 import { DatabaseModule } from 'src/db/database.module';
 import { ExamTypeController } from './exam-type.controller';
+import { ExamPaperSectionService } from './exam-paper-section.service';
+import { ExamSectionRepository } from './exam-paper-section.repository';
 // import { ExamPaperGeneratorService } from './exam-paper.generator.service';
 
 @Module({
@@ -20,6 +22,8 @@ import { ExamTypeController } from './exam-type.controller';
     ExamPaperRepository,
     ExamTypeService,
     ExamTypeRepository,
+    ExamPaperSectionService,
+    ExamSectionRepository
   ],
   exports: [ExamPaperService, ExamPaperRepository, ExamTypeService, ExamTypeRepository],
 })
