@@ -1,31 +1,31 @@
-import { 
-  Controller, 
-  Get, 
-  Post, 
-  Body, 
-  Param, 
-  Delete, 
-  Put, 
-  Query, 
-  ParseUUIDPipe, 
-  DefaultValuePipe, 
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+  Query,
+  ParseUUIDPipe,
+  DefaultValuePipe,
   ParseIntPipe,
   UseInterceptors,
   HttpCode,
   HttpStatus
 } from '@nestjs/common';
-import { 
-  ApiTags, 
-  ApiOperation, 
-  ApiResponse, 
-  ApiParam, 
-  ApiQuery, 
-  ApiBody 
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiQuery,
+  ApiBody
 } from '@nestjs/swagger';
-import { 
-  CreateExamPaperDto, 
-  UpdateExamPaperDto, 
-  ExamPaperFilterDto, 
+import {
+  CreateExamPaperDto,
+  UpdateExamPaperDto,
+  ExamPaperFilterDto,
 } from './dto/exam-paper.dto';
 import { ExamPaperService } from './exam-papers.service';
 // import { ExamPaperGeneratorService } from './exam-paper.generator.service';
@@ -42,7 +42,7 @@ export class ExamPaperController {
     private readonly examPaperService: ExamPaperService,
     private readonly examPaperSectionService: ExamPaperSectionService,
     // private readonly examPaperGeneratorService: ExamPaperGeneratorService
-  ) {}
+  ) { }
 
   @Get('search')
   @ApiOperation({ summary: 'Search exam papers by title' })
@@ -74,6 +74,13 @@ export class ExamPaperController {
     @Query('offset', new DefaultValuePipe(0), ParseIntPipe) offset?: number,
   ) {
     return this.examPaperService.filterExamPapers(filterDto, limit, offset);
+  }
+
+  @Get(':id/short-details')
+  @ApiOperation({ summary: 'Get exam paper by ID with all questions' })
+  @ApiParam({ name: 'id', required: true, type: String })
+  async findOneNoDetails(@Param('id', ParseUUIDPipe) id: string) {
+    return this.examPaperService.findOneNoDetails(id);
   }
 
   @Get(':id/full')
@@ -148,6 +155,7 @@ export class ExamPaperController {
     @Param('examPaperId', ParseUUIDPipe) examPaperId: string,
     @Body() createSectionDto: CreateSectionDto,
   ) {
+    console.log('Creating section for exam paper:', examPaperId, 'with data:', createSectionDto);
     return this.examPaperSectionService.createSection(examPaperId, createSectionDto);
   }
 

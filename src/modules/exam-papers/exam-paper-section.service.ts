@@ -1,15 +1,19 @@
-import { BadRequestException, ConflictException, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { ExamSectionRepository } from "./exam-paper-section.repository";
 import { ExamPaperRepository } from "./exam-paper.repository";
 import { AddMultipleQuestionsToSectionDto, AddQuestionToSectionDto, CreateSectionDto, UpdateQuestionInSectionDto, UpdateSectionDto } from "./dto/exam-section.dto";
 
+@Injectable()
 export class ExamPaperSectionService {
-    constructor(
-    private readonly examSectionRepository: ExamSectionRepository,
+  constructor(
+    private examSectionRepository: ExamSectionRepository,
     private examPaperRepository: ExamPaperRepository,
-  ) {}
+  ) { }
   async getExamPaperById(id: string) {
+    console.log('1. Getting exam paper by ID:', id);
     const examPaper = await this.examPaperRepository.findById(id);
+    console.log('1.2. Getting exam paper by ID:', examPaper);
+
     if (!examPaper) {
       throw new NotFoundException(`Exam paper with ID ${id} not found`);
     }
@@ -17,6 +21,7 @@ export class ExamPaperSectionService {
   }
 
   async createSection(examPaperId: string, data: CreateSectionDto) {
+    console.log('1. Creating section with data:', examPaperId, data);
     // Verify exam paper exists
     await this.getExamPaperById(examPaperId);
 
@@ -36,10 +41,13 @@ export class ExamPaperSectionService {
     if (data.sectionNumber <= 0) {
       throw new BadRequestException('Section number must be greater than 0');
     }
-
+    console.log('1. Creating section with data:', data);
     // Check if section number already exists for this exam paper
     const existingSections = await this.examSectionRepository.getSectionsByExamPaperId(examPaperId);
+    console.log('2. Existing sections for exam paper:', existingSections);
+
     const sectionNumberExists = existingSections.some(section => section.sectionNumber === data.sectionNumber);
+    console.log('3. Section number exists:', sectionNumberExists);
     if (sectionNumberExists) {
       throw new ConflictException(`Section number ${data.sectionNumber} already exists for this exam paper`);
     }
@@ -50,7 +58,7 @@ export class ExamPaperSectionService {
   async getSectionsByExamPaper(examPaperId: string) {
     // Verify exam paper exists
     await this.getExamPaperById(examPaperId);
-    
+
     return this.examSectionRepository.getSectionsByExamPaperId(examPaperId);
   }
 
@@ -81,7 +89,7 @@ export class ExamPaperSectionService {
     const currentSection = await this.examSectionRepository.getSectionById(sectionId);
     const questionsToAnswer = data.questionsToAnswer ?? currentSection.questionsToAnswer;
     const totalQuestions = data.totalQuestions ?? currentSection.totalQuestions;
-    
+
     if (questionsToAnswer > totalQuestions) {
       throw new BadRequestException('Questions to answer cannot be greater than total questions');
     }
@@ -92,7 +100,7 @@ export class ExamPaperSectionService {
   async deleteSection(sectionId: string) {
     // Check if section exists
     await this.getSectionById(sectionId);
-    
+
     return this.examSectionRepository.deleteSection(sectionId);
   }
 
@@ -148,7 +156,7 @@ export class ExamPaperSectionService {
 
     // Get current questions
     const currentQuestions = await this.examSectionRepository.getQuestionsInSection(sectionId);
-    
+
     // Check if adding these questions would exceed the limit
     if (currentQuestions.length + data.questions.length > section.totalQuestions) {
       throw new BadRequestException(
@@ -166,10 +174,10 @@ export class ExamPaperSectionService {
     // Auto-assign question numbers if not provided and check for duplicates
     let nextQuestionNumber = await this.examSectionRepository.getNextQuestionNumber(sectionId);
     const usedNumbers = new Set(currentQuestions.map(q => q.questionNumber));
-    
+
     const questionsWithNumbers = data.questions.map(question => {
       let questionNumber = question.questionNumber;
-      
+
       if (!questionNumber) {
         // Auto-assign next available number
         while (usedNumbers.has(nextQuestionNumber)) {
@@ -198,7 +206,7 @@ export class ExamPaperSectionService {
   async getQuestionsInSection(sectionId: string) {
     // Check if section exists
     await this.getSectionById(sectionId);
-    
+
     return this.examSectionRepository.getQuestionsInSection(sectionId);
   }
 

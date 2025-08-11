@@ -13,7 +13,7 @@ export class ExamSectionRepository {
 
     async createSection(examPaperId: string, sectionData: IExamSectionCreatePayload) {
         const sectionMarks = sectionData.marksPerQuestion * sectionData.questionsToAnswer;
-
+        console.log("4. in repository createSection, sectionData:", sectionData);
         const [createdSection] = await this.db
             .insert(schema.examPaperSections)
             .values({

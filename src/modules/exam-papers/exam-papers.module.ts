@@ -25,6 +25,13 @@ import { ExamSectionRepository } from './exam-paper-section.repository';
     ExamPaperSectionService,
     ExamSectionRepository
   ],
-  exports: [ExamPaperService, ExamPaperRepository, ExamTypeService, ExamTypeRepository],
+  exports: [
+    ExamPaperService, 
+    ExamPaperRepository, 
+    ExamTypeService, 
+    ExamTypeRepository,
+    ExamPaperSectionService,
+    ExamSectionRepository
+  ],
 })
 export class ExamPapersModule { }

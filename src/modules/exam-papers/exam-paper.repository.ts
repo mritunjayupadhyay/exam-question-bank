@@ -26,14 +26,23 @@ export class ExamPaperRepository {
   }
 
   async findById(id: string) {
-    return this.db
-      .select({
-        id: schema.examPapers.id
-      })
-      .from(schema.examPapers)
-      .where(eq(schema.examPapers.id, id))
-      .limit(1)
-      .then(rows => rows[0] || null);
+    try {
+      console.log('Finding exam paper with ID:', id);
+
+      const result = await this.db
+        .select({
+          id: schema.examPapers.id
+        })
+        .from(schema.examPapers)
+        .where(eq(schema.examPapers.id, id))
+        .limit(1);
+
+      console.log('Query result:', result);
+      return result[0] || null;
+    } catch (error) {
+      console.error('Error in findById:', error);
+      throw error; // Re-throw to see the actual error
+    }
   }
 
   async findByIdWithQuestions(id: string) {

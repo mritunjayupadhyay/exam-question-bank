@@ -9,7 +9,8 @@ import {
     Query,
     ParseUUIDPipe, 
     DefaultValuePipe, 
-    ParseIntPipe 
+    ParseIntPipe, 
+    UseInterceptors
   } from '@nestjs/common';
   import { 
     ApiTags, 
@@ -20,8 +21,10 @@ import {
   } from '@nestjs/swagger';
   import { ExamTypeService } from './exam-type.service';
   import { CreateExamTypeDto, UpdateExamTypeDto } from './dto/exam-type.dto';
+import { ResponseInterceptor } from 'src/interceptors/response.interceptor';
   
   @ApiTags('exam-types')
+  @UseInterceptors(ResponseInterceptor)
   @Controller('exam-types')
   export class ExamTypeController {
     constructor(

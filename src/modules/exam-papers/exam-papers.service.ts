@@ -2,9 +2,9 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { ExamPaperRepository } from './exam-paper.repository';
 import { ExamTypeRepository } from './exam-type.repository';
 
-import { 
-  CreateExamPaperDto, 
-  UpdateExamPaperDto, 
+import {
+  CreateExamPaperDto,
+  UpdateExamPaperDto,
   ExamPaperFilterDto,
   AddQuestionToExamPaperDto,
   UpdateExamPaperQuestionDto
@@ -21,10 +21,18 @@ export class ExamPaperService {
     private subjectRepository: SubjectRepository,
     private classRepository: ClassesRepository,
     private questionRepository: QuestionRepository,
-  ) {}
+  ) { }
 
-    async searchByTitle(title: string, limit?: number, offset?: number) {
+  async searchByTitle(title: string, limit?: number, offset?: number) {
     return this.examPaperRepository.searchExamPapersByTitle(title, limit, offset);
+  }
+
+  async findOneNoDetails(id: string) {
+    const examPaper = await this.examPaperRepository.findById(id);
+    if (!examPaper) {
+      throw new NotFoundException(`Exam paper with ID ${id} not found`);
+    }
+    return examPaper;
   }
 
   async findByIdWithQuestions(id: string) {
@@ -55,14 +63,14 @@ export class ExamPaperService {
     if (!examPaper) {
       throw new NotFoundException(`Exam paper with ID ${id} not found`);
     }
-    
+
     // Validate references if they are being updated
     await this.validateUpdateReferences(
-      updateExamPaperDto.examTypeId, 
-      updateExamPaperDto.subjectId, 
+      updateExamPaperDto.examTypeId,
+      updateExamPaperDto.subjectId,
       updateExamPaperDto.classId
     );
-    
+
     return this.examPaperRepository.updateExamPaper(id, updateExamPaperDto);
   }
 
@@ -72,14 +80,14 @@ export class ExamPaperService {
     if (!examPaper) {
       throw new NotFoundException(`Exam paper with ID ${id} not found`);
     }
-    
+
     return this.examPaperRepository.deleteExamPaper(id);
   }
 
   // Helper method to validate references to other entities for create
   private async validateEntityReferences(
-    examTypeId: string, 
-    subjectId: string, 
+    examTypeId: string,
+    subjectId: string,
     classId: string
   ) {
     // Check if exam type exists
@@ -87,13 +95,13 @@ export class ExamPaperService {
     if (!examType) {
       throw new NotFoundException(`Exam type with ID ${examTypeId} not found`);
     }
-    
+
     // Check if subject exists
     const subject = await this.subjectRepository.findById(subjectId);
     if (!subject) {
       throw new NotFoundException(`Subject with ID ${subjectId} not found`);
     }
-    
+
     // Check if class exists
     const classEntity = await this.classRepository.findById(classId);
     if (!classEntity) {
@@ -103,8 +111,8 @@ export class ExamPaperService {
 
   // Helper method to validate references for updates
   private async validateUpdateReferences(
-    examTypeId?: string, 
-    subjectId?: string, 
+    examTypeId?: string,
+    subjectId?: string,
     classId?: string
   ) {
     if (examTypeId) {
@@ -113,14 +121,14 @@ export class ExamPaperService {
         throw new NotFoundException(`Exam type with ID ${examTypeId} not found`);
       }
     }
-    
+
     if (subjectId) {
       const subject = await this.subjectRepository.findById(subjectId);
       if (!subject) {
         throw new NotFoundException(`Subject with ID ${subjectId} not found`);
       }
     }
-    
+
     if (classId) {
       const classEntity = await this.classRepository.findById(classId);
       if (!classEntity) {
