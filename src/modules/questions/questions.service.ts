@@ -43,6 +43,9 @@ export class QuestionService {
       subject: question.subjectName, // Assuming subject has a name property
       topic: question.topicName, // Assuming topic has a name property
       className: question.className, // Assuming class has a name property
+      subjectId: question.subjectId,
+      topicId: question.topicId,
+      classId: question.classId,
       questionOptions: question.options.map(option => ({
         id: option.id,
         optionText: option.optionText,

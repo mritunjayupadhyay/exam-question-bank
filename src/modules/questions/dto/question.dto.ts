@@ -111,5 +111,8 @@ export class QuestionFullDetailsDto implements IQuestionFullDetails {
   constructor(partial: Partial<QuestionFullDetailsDto>) {
     Object.assign(this, partial);
   }
+  subjectId: string;
+  topicId: string;
+  classId: string;
 }
 
