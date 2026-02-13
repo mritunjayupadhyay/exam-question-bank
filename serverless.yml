@@ -19,6 +19,11 @@ plugins:
   - serverless-offline
 
 custom:
+  handlerPrefix:
+    local: src
+    dev: dist
+    staging: dist
+    production: dist
   serverless-offline:
     httpPort: 8000
     lambdaPort: 8002
@@ -46,14 +51,14 @@ functions:
     environment:
       NODE_ENV: ${opt:stage, 'local'}
       MY_PARAMETER: ${ssm:/my-first-parameter-store, 'local-fallback-value'}
-    handler: dist/src/modules/exam-papers/lambda.handler
+    handler: ${self:custom.handlerPrefix.${opt:stage, 'local'}}/modules/exam-papers/lambda.handler
     events:
       - http:
           path: /ex-p/{proxy+}
           method: ANY
           cors: true
   questions:
-    handler: dist/src/modules/questions/lambda.handler
+    handler: ${self:custom.handlerPrefix.${opt:stage, 'local'}}/modules/questions/lambda.handler
     events:
       - http:
           path: /qs/{proxy+}
@@ -68,7 +73,7 @@ functions:
       NODE_ENV: ${opt:stage, 'local'}
       MY_PARAMETER: ${ssm:/my-first-parameter-store, 'local-fallback-value'}
   basicSetup:
-    handler: dist/src/modules/basic-setup/lambda.handler
+    handler: ${self:custom.handlerPrefix.${opt:stage, 'local'}}/modules/basic-setup/lambda.handler
     events:
       - http:
           path: /basic-setup/{proxy+}

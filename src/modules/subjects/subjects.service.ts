@@ -1,4 +1,3 @@
-import { subjects } from './../../db/schema/subject';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SubjectRepository } from './subjects.repository';

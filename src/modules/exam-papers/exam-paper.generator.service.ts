@@ -7,7 +7,7 @@ import { ExamTypeRepository } from './exam-type.repository';
 import { SubjectRepository } from '../subjects/subjects.repository';
 import { ClassesRepository } from '../classes/classes.repository';
 import { inArray } from 'drizzle-orm';
-import * as schema from '../../db/schema';
+import * as schema from 'exam-question-bank-db';
 
 
 @Injectable()

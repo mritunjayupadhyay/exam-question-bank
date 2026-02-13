@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import * as dotenv from 'dotenv';
 import { Pool } from 'pg';
-import * as schema from './schema';
+import * as schema from 'exam-question-bank-db';
 
 // Connection pooling is different in serverless environments
 let db: ReturnType<typeof createDrizzleClient>;

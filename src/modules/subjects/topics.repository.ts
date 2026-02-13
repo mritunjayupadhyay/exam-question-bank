@@ -1,8 +1,7 @@
-import { topics } from './../../db/schema/subject';
 import { Injectable, Inject } from '@nestjs/common';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { eq, and, like, desc, sql } from 'drizzle-orm';
-import * as schema from '../../db/schema';
+import * as schema from 'exam-question-bank-db';
 import { CreateTopicDto, UpdateTopicDto } from './dto/topic.dto';
 
 @Injectable()

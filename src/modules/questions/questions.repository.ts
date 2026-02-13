@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { eq, and, like, desc, gte, lte, inArray, SQL, sql } from 'drizzle-orm';
-import * as schema from '../../db/schema';
+import * as schema from 'exam-question-bank-db';
 import { QuestionFilterDto } from './dto/filter-question.dto';
 import { CreateQuestionDto, UpdateQuestionDto } from './dto/create-question.dto';
 import { uuid } from 'drizzle-orm/gel-core';

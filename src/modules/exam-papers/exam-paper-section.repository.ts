@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { eq, and, like, desc, gte, lte, SQL, sql, inArray } from 'drizzle-orm';
-import * as schema from '../../db/schema';
+import * as schema from 'exam-question-bank-db';
 import { IExamSectionAddQuestionPayload, IExamSectionCreatePayload, IExamSectionPayloadPartial, IExamSectionUpdateQuestionPayload } from "question-bank-interface";
 
 
